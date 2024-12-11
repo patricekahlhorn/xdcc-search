@@ -64,10 +64,9 @@ func (c *Client) Search(keywords []string) (search.Results, error) {
 	for _, p := range c.providers {
 		ctx, cancel := context.WithTimeout(ctx, c.timeout)
 
-		go c.runSearch(p, resultsChannel, query)
-
 		go func() {
 			defer cancel()
+			c.runSearch(p, resultsChannel, query)
 			select {
 			case <-ctx.Done():
 				errChan <- errors.New(fmt.Sprintf("Provider %#v exceeded timeout\n", p))
